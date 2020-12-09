@@ -532,12 +532,4 @@ public class Solution {
 	return parentColorChildrenColors.get(color).contains("shiny gold") || parentColorChildrenColors.get(color).stream().anyMatch(child -> canHoldShinyGold(
 	    child));
     }
-
-    public static void createTree() {
-
-    }
-
-    public static int depthForSearch() {
-	return 0;
-    }
 }
