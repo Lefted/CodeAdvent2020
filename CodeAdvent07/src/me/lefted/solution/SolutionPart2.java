@@ -13,7 +13,7 @@ public class SolutionPart2 {
 
     public static Pattern parentPattern = Pattern.compile("^\\w+ \\w+");
     public static Pattern childrenPattern = Pattern.compile("\\d+ \\w+ \\w+");
-    public static Map<String, List<String>> parentColorChildrenColors = new HashMap();
+    public static Map<String, Map<String, Integer>> parentColorChildrenColors = new HashMap();
 
     public static void main(String[] args) {
 	String input = "plaid beige bags contain 3 drab magenta bags.\r\n" + "dim silver bags contain 2 shiny chartreuse bags, 4 dull magenta bags.\r\n"
@@ -491,23 +491,21 @@ public class SolutionPart2 {
 	    + "plaid silver bags contain 5 pale cyan bags, 2 wavy brown bags, 1 drab turquoise bag.\r\n"
 	    + "striped coral bags contain 4 wavy gray bags, 5 faded purple bags.\r\n";
 
-	String test = "light red bags contain 1 bright white bag, 2 muted yellow bags.\r\n"
-	    + "dark orange bags contain 3 bright white bags, 4 muted yellow bags.\r\n" + "bright white bags contain 1 shiny gold bag.\r\n"
-	    + "muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.\r\n" + "shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.\r\n"
-	    + "dark olive bags contain 3 faded blue bags, 4 dotted black bags.\r\n" + "vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.\r\n"
-	    + "faded blue bags contain no other bags.\r\n" + "dotted black bags contain no other bags.";
+	String test = "shiny gold bags contain 2 dark red bags.\r\n" + "dark red bags contain 2 dark orange bags.\r\n"
+	    + "dark orange bags contain 2 dark yellow bags.\r\n" + "dark yellow bags contain 2 dark green bags.\r\n"
+	    + "dark green bags contain 2 dark blue bags.\r\n" + "dark blue bags contain 2 dark violet bags.\r\n" + "dark violet bags contain no other bags.";
 
 	List<String> ruleList = Arrays.asList(input.split("\r\n"));
 	int found = 0;
 	parentColorChildrenColors = parseInput(ruleList);
 
-	found = (int) parentColorChildrenColors.keySet().stream().filter(color -> canHoldShinyGold(color)).count();
+	found = countChildrenDFS("shiny gold");
 
 	System.out.println(String.format("Found %s", found));
     }
 
-    public static Map<String, List<String>> parseInput(List<String> ruleList) {
-	Map<String, List<String>> result = new HashMap();
+    public static Map<String, Map<String, Integer>> parseInput(List<String> ruleList) {
+	Map<String, Map<String, Integer>> result = new HashMap();
 
 	for (String rule : ruleList) {
 	    // find parent
@@ -517,27 +515,34 @@ public class SolutionPart2 {
 
 	    // add children to list
 	    Matcher childrenMatcher = childrenPattern.matcher(rule);
-	    List<String> children = new ArrayList();
+	    Map<String, Integer> childrenMap = new HashMap();
 
 	    while (childrenMatcher.find()) {
-		children.add(childrenMatcher.group());
+		String countAndColor = childrenMatcher.group();
+		childrenMap.put(countAndColor.substring(2), Integer.parseInt(countAndColor.split(" ")[0]));
 	    }
 
-	    result.put(parent, children.stream().map(child -> child.substring(2)).collect(Collectors.toList()));
+	    result.put(parent, childrenMap);
 	}
 	return result;
     }
 
-    public static boolean canHoldShinyGold(String color) {
-	return parentColorChildrenColors.get(color).contains("shiny gold") || parentColorChildrenColors.get(color).stream().anyMatch(child -> canHoldShinyGold(
-	    child));
-    }
+    // depth-first-search using recursion
+    public static int countChildrenDFS(String color) {
+	int count = 0;
+	Map<String, Integer> children = parentColorChildrenColors.get(color);
 
-    public static void createTree() {
+	// if bag can hold children
+	if (!children.isEmpty()) {
+	    // add child's children
+	    for (String childColor : children.keySet()) {
+		final int bagCount = children.get(childColor);
+		count += bagCount * countChildrenDFS(childColor);
+	    }
+	    // add count of children bags
+	    count += children.values().stream().mapToInt(Integer::intValue).sum();
+	}
 
-    }
-
-    public static int depthForSearch() {
-	return 0;
+	return count;
     }
 }
