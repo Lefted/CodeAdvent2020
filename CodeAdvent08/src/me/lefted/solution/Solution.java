@@ -1,16 +1,10 @@
 package me.lefted.solution;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
 
 public class Solution {
 
-    // public static Pattern parentPattern = Pattern.compile("^\\w+ \\w+");
-    // public static Pattern childrenPattern = Pattern.compile("\\d+ \\w+ \\w+");
-    // public static Map<String, Map<String, Integer>> parentColorChildrenColors = new HashMap();
     public static boolean[] visited;
 
     public static void main(String[] args) {
