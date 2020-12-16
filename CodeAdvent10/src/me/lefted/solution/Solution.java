@@ -20,13 +20,13 @@ public class Solution {
 
     public static int calculateResult(List<Long> input) {
 	input.add(0L);
-	List<Long> sortedList = input.stream().sorted(Comparator.comparingLong(Long::longValue)).collect(Collectors.toList());
-	sortedList.add(sortedList.stream().mapToLong(Long::longValue).max().getAsLong() + 3L);
+	input.sort(Long::compareTo);
+	input.add(input.get(input.size() - 1) + 3L);
 	int numberOfDiff3s = 0;
 	int numberOfDiff1s = 0;
 
-	for (int i = 1; i < sortedList.size(); ++i) {
-	    long difference = sortedList.get(i) - sortedList.get(i - 1);
+	for (int i = 1; i < input.size(); ++i) {
+	    long difference = input.get(i) - input.get(i - 1);
 
 	    if (difference == 3) {
 		numberOfDiff3s++;
