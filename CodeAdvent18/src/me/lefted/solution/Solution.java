@@ -6,8 +6,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
-
-import me.lefted.functions.Operator;
+import java.util.function.LongBinaryOperator;
 
 public class Solution {
 
@@ -24,7 +23,7 @@ public class Solution {
     public static long calcResult(String line) {
 	List<String> args = Arrays.asList(line.split(" "));
 	Stack<Long> valueStack = new Stack<>();
-	Stack<Operator> opStack = new Stack<>();
+	Stack<LongBinaryOperator> opStack = new Stack<>();
 
 	valueStack.push(0L);
 	opStack.push((x, y) -> x + y);
@@ -46,14 +45,14 @@ public class Solution {
 		Long elementNum = Long.parseLong(withoutBrackets);
 
 		// perform calculation
-		valueStack.setElementAt(opStack.peek().getResult(elementNum, valueStack.peek()), valueStack.size() - 1);
+		valueStack.setElementAt(opStack.peek().applyAsLong(elementNum, valueStack.peek()), valueStack.size() - 1);
 	    } else if (element.contains(")")) {
 		// remove )
 		String withoutBrackets = element.replace(")", "");
 		long elementNum = Long.parseLong(withoutBrackets);
 
 		// perform calculation
-		valueStack.setElementAt(opStack.peek().getResult(elementNum, valueStack.peek()), valueStack.size() - 1);
+		valueStack.setElementAt(opStack.peek().applyAsLong(elementNum, valueStack.peek()), valueStack.size() - 1);
 
 		int numBrackets = (int) element.chars().filter(ch -> ch == ')').count();
 
@@ -62,11 +61,11 @@ public class Solution {
 		    long topValue = valueStack.pop();
 		    opStack.pop();
 		    // combine values when popping
-		    valueStack.setElementAt(opStack.peek().getResult(topValue, valueStack.peek()), valueStack.size() - 1);
+		    valueStack.setElementAt(opStack.peek().applyAsLong(topValue, valueStack.peek()), valueStack.size() - 1);
 		}
 
 	    } else {
-		// check of op codes
+		// check for op codes
 		switch (element) {
 		case "+":
 		    opStack.setElementAt((x, y) -> x + y, opStack.size() - 1);
@@ -77,7 +76,7 @@ public class Solution {
 		default:
 		    long elementNum = Long.parseLong(element);
 		    // perform caluclation
-		    valueStack.setElementAt(opStack.peek().getResult(elementNum, valueStack.peek()), valueStack.size() - 1);
+		    valueStack.setElementAt(opStack.peek().applyAsLong(elementNum, valueStack.peek()), valueStack.size() - 1);
 		    break;
 		}
 	    }
