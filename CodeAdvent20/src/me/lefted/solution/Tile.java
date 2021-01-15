@@ -21,14 +21,16 @@ public class Tile {
     // rotates clockwise
     public Tile rotate(int steps) {
 	char[][] newData = new char[TILE_SIZE][TILE_SIZE];
+	char[][] dataCopy = copyOf(data);
 
 	if (steps > 0) {
 	    for (int step = 0; step < steps; step++) {
 		for (int i = 0; i < TILE_SIZE; i++) {
 		    for (int j = 0; j < TILE_SIZE; j++) {
-			newData[i][j] = data[TILE_SIZE - j - 1][i];
+			newData[i][j] = dataCopy[TILE_SIZE - j - 1][i];
 		    }
 		}
+		dataCopy = copyOf(newData);
 	    }
 	} else {
 	    newData = data;
@@ -37,6 +39,18 @@ public class Tile {
 	newTile.setData(newData);
 
 	return newTile;
+    }
+
+    public static char[][] copyOf(char[][] original) {
+	char[][] copy = new char[original.length][original[0].length];
+
+	for (int y = 0; y < original.length; y++) {
+	    for (int x = 0; x < original[0].length; x++) {
+		copy[y][x] = original[y][x];
+	    }
+	}
+
+	return copy;
     }
 
     public Tile flipHorizontal() {
@@ -216,6 +230,18 @@ public class Tile {
 	    }
 	    System.out.println();
 	}
+    }
+
+    public char[][] getImageDataWithoutBorder() {
+	char[][] data = new char[TILE_SIZE - 2][TILE_SIZE - 2];
+
+	for (int y = 1; y < TILE_SIZE - 1; y++)
+	    for (int x = 1; x < TILE_SIZE - 1; x++) {
+
+		data[y - 1][x - 1] = this.data[y][x];
+	    }
+
+	return data;
     }
 
     public static void printGrid(Tile[][] grid) {
