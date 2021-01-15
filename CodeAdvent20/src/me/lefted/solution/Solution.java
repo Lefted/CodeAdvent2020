@@ -20,12 +20,6 @@ public class Solution {
 	System.out.println(String.format("found %s", found));
     }
 
-    public static char[][] getStichedImage(Tile[][] grid) {
-	char[][] data = null;
-
-	return data;
-    }
-
     public static List<Tile> parseInput(String input) {
 	List<Tile> tiles = new ArrayList<>();
 
