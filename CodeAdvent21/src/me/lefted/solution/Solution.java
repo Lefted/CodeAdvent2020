@@ -13,8 +13,9 @@ import java.util.stream.Stream;
 
 public class Solution {
 
-    public static Function<String, String[]> FKT_GET_INGREDIENTS = line -> (line.contains("(") ? line.split(" \\(")[0].trim() : line).split(" ");
-    public static Function<String, String[]> FKT_GET_ALLERGENS = line -> line.contains("(") ? line.split("\\(contains ")[1].replace(")", "").split(", ") : null;
+    public static final Function<String, String[]> FKT_GET_INGREDIENTS = line -> (line.contains("(") ? line.split(" \\(")[0].trim() : line).split(" ");
+    public static final Function<String, String[]> FKT_GET_ALLERGENS = line -> line.contains("(") ? line.split("\\(contains ")[1].replace(")", "").split(", ")
+	: null;
 
     public static void main(String[] args) throws IOException {
 	List<String> input = Files.readAllLines(Paths.get("src/me/lefted/solution/input.txt"));
@@ -24,6 +25,9 @@ public class Solution {
 	System.out.println(String.format("found %s", found));
     }
 
+    /**
+     * @return how many times the allergenfree ingredients appear
+     */
     public static int calcSolution(List<String> allergenfreeIngredients, List<String> input) {
 	return input.stream().mapToInt(line -> (int) Stream.of(FKT_GET_INGREDIENTS.apply(line)).filter(ingredient -> allergenfreeIngredients.contains(
 	    ingredient)).count()).sum();
@@ -49,10 +53,10 @@ public class Solution {
 		    // iterate over allergens and check if the ingredient can't possibly be the allergent
 		    for (String allergent : allergens) {
 
-			if (cantBeAllergic == null && cantIngredientBeAllergic(ingredient, allergent, input)) {
+			if (cantBeAllergic == null && !canIngredientBeAllergent(ingredient, allergent, input)) {
 			    cantBeAllergic = true;
 			} else if (cantBeAllergic != null) {
-			    cantBeAllergic = cantBeAllergic.booleanValue() && cantIngredientBeAllergic(ingredient, allergent, input);
+			    cantBeAllergic = cantBeAllergic.booleanValue() && !canIngredientBeAllergent(ingredient, allergent, input);
 			}
 		    }
 		    cantBeAllergic = cantBeAllergic == null ? false : cantBeAllergic;
@@ -69,18 +73,20 @@ public class Solution {
     }
 
     /**
-     * @return true if ingredient can't possibly be allergic
+     * @return false if ingredient can't possibly be allergic
      */
-    public static boolean cantIngredientBeAllergic(String ingredient, String allergent, List<String> input) {
+    public static boolean canIngredientBeAllergent(String ingredient, String allergent, List<String> input) {
 
 	for (String line : input) {
 
 	    List<String> allergens = Arrays.asList(FKT_GET_ALLERGENS.apply(line));
 	    List<String> ingredients = Arrays.asList(FKT_GET_INGREDIENTS.apply(line));
 
-	    if (allergens.contains(allergent) && !ingredients.contains(ingredient))
-		return true;
+	    if (allergens.contains(allergent) && !ingredients.contains(ingredient)) {
+		return false;
+	    }
 	}
-	return false;
+
+	return true;
     }
 }
