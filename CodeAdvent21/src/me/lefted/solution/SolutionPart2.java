@@ -26,9 +26,8 @@ public class SolutionPart2 {
 	List<String> allergenfreeIngredients = getAllergenfreeIngredients(new ArrayList<>(input));
 
 	List<String> input2 = removeAllergenfreeIngredients(new ArrayList<>(input), allergenfreeIngredients);
-	Set<String> allAllergens = new HashSet<>();
-
-	Map<String, String> mapping = compileAllergentIngredientMap(input2, allAllergens);
+	Map<String, String> mapping = compileAllergentIngredientMap(input2);
+	
 	String found = compileSolutionString(mapping);
 	System.out.println(String.format("found %s", found));
     }
@@ -48,7 +47,7 @@ public class SolutionPart2 {
 	return builder.toString();
     }
 
-    public static Map<String, String> compileAllergentIngredientMap(List<String> input, Set<String> allAllergens) {
+    public static Map<String, String> compileAllergentIngredientMap(List<String> input) {
 	// map each allergent to every possible ingredient
 	Map<String, Set<String>> allergentPossibleIngredientMap = new HashMap<>();
 
